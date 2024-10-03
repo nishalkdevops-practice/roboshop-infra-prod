@@ -1,0 +1,96 @@
+pipeline {
+    agent { node { label 'Agent -1'}}
+
+    options {
+        ansiColor('xterm')
+    }
+
+
+    stages {
+        stage('Init') {
+            steps {
+                
+                sh'''
+                    cd 01-vpc 
+                    ls -ltr
+                    pwd
+                    terraform init
+
+
+                '''
+            
+            }
+        }
+        stage('Plan') {
+            steps {
+                
+                sh'''
+                    ls -ltr
+                    pwd
+                    cd 01-vpc
+                    terraform plan
+
+
+                '''
+            }
+        }
+
+        stage('Approve') {
+            steps {
+                input "Shall i apply?"
+          
+            }
+        }
+
+        stage('Apply') {
+            steps {
+                
+                sh'''
+                    ls -ltr
+                    pwd
+                    cd 01-vpc
+                    terraform apply -auto-approve
+
+
+                '''
+            }
+        }
+
+
+/*         stage('destroy') {
+            steps {
+                
+                sh'''
+                    ls -ltr
+                    pwd
+                    cd 01-vpc
+                    terraform destroy -auto-approve
+
+
+                '''
+                
+                
+                
+            } 
+    } */
+
+
+    }
+
+
+    post {
+        always {
+            echo 'I will always run weather job is success or not'
+        }
+
+        success{
+            echo 'I will run only when job is success'
+            
+        }
+
+        failure{
+            echo 'I will run when failure'
+        }
+
+    }
+}
